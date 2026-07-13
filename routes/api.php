@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\Api\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('products', ProductController::class)->except('update');
     Route::post('/products/{product}', [ProductController::class, 'update']);
+    Route::post('/stock-transaction', [StockController::class, 'store']);
+    Route::get('/stock-transaction-history', [StockController::class, 'history']);
+    Route::get('/stock-transaction/{stockTransaction}', [StockController::class, 'show']);
 });
