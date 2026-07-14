@@ -13,7 +13,7 @@ class StockTransactionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->role == 'admin';
+        return $user->role === 'admin';
     }
 
     /**
@@ -21,7 +21,7 @@ class StockTransactionPolicy
      */
     public function view(User $user, StockTransaction $stockTransaction): bool
     {
-        return $user->role == 'admin' || $user->role == 'staff';
+        return $user->role === 'admin' || $user->role === 'staff';
     }
 
     /**
@@ -29,6 +29,6 @@ class StockTransactionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role == 'admin' || $user->role == 'staff';
+        return $user->role === 'admin' || $user->role === 'staff';
     }
 }

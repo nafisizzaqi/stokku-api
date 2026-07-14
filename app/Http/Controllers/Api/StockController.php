@@ -15,24 +15,21 @@ class StockController extends Controller
     {
         $this->authorize('create', StockTransaction::class);
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:products,id,deleted_at,NULL',
             'type' => 'required|in:in,out',
             'quantity' => 'required|integer|min:1',
             'note' => 'nullable|string'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
-        $stock_before = $product->stock;
-        if ($request->type === 'out' && $request->quantity > $stock_before) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Stock tidak cukup'
-            ], 422);
-        }
-        $stock_after = $request->type === 'in' ? $stock_before + $request->quantity : $stock_before - $request->quantity;
-        $stockTransaction = DB::transaction(function () use ($request, $product, $stock_before, $stock_after) {
+        $stockTransaction = DB::transaction(function () use ($request) {
+            $product = Product::lockForUpdate()->findOrFail($request->product_id);
+            $stock_before = $product->stock;
+            if ($request->type === 'out' && $request->quantity > $stock_before) {
+                abort(422, 'Stock tidak cukup');
+            }
+            $stock_after = $request->type === 'in' ? $stock_before + $request->quantity : $stock_before - $request->quantity;
             $product->update(['stock' => $stock_after]);
-            return StockTransaction::create([
+            $stockTransaction = StockTransaction::create([
                 'product_id'   => $request->product_id,
                 'user_id'      => auth()->id(),
                 'type'         => $request->type,
@@ -41,34 +38,28 @@ class StockController extends Controller
                 'stock_after'  => $stock_after,
                 'note'         => $request->note
             ]);
+            if ($stock_after <= $product->min_stock) {
+                DB::afterCommit(fn() => StockLow::dispatch($stockTransaction));
+            }
+            return $stockTransaction;
         });
-        if ($stock_after <= $product->min_stock) {
-            StockLow::dispatch($stockTransaction);
-        }
         return response()->json([
             'success' => true,
-            'data' => $stockTransaction
-        ]);
+            'data' => $stockTransaction->load(['product', 'user'])
+        ], 201);
     }
 
-    public function history()
+    public function history(Request $request)
     {
         $this->authorize('viewAny', StockTransaction::class);
         $query = StockTransaction::with(['product', 'user']);
+        if ($request->product_id) {
+            $query->where('product_id', $request->product_id);
+        }
         $stockTransactions = $query->paginate(10);
         return response()->json([
             'success' => true,
             'data' => $stockTransactions
-        ]);
-    }
-
-    public function show(StockTransaction $stockTransaction)
-    {
-        $this->authorize('view', $stockTransaction);
-        $stockTransaction->load(['product', 'user']);
-        return response()->json([
-            'success' => true,
-            'data' => $stockTransaction
         ]);
     }
 }
