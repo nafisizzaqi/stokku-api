@@ -37,7 +37,7 @@ class LoginController extends Controller
     {
         $user = Auth::user();
         return response()->json([
-            'me' =>  $user
+            'data' =>  $user
         ]);
     }
 

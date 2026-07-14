@@ -24,9 +24,21 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         $category = $this->route('category');
+
         return [
-            'name' => ($category ? 'sometimes' : 'required') . '|string|min:3|max:255',
-            'slug' => [($category ? 'sometimes' : 'required') . '|string', 'min:3', 'max:255', Rule::unique('categories', 'slug')->ignore($category)],
+            'name' => [
+                $category ? 'sometimes' : 'required',
+                'string',
+                'min:3',
+                'max:255'
+            ],
+            'slug' => [
+                $category ? 'sometimes' : 'required',
+                'string',
+                'min:3',
+                'max:255',
+                Rule::unique('categories', 'slug')->ignore($category)
+            ],
         ];
     }
 }

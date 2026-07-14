@@ -24,11 +24,27 @@ class SupplierRequest extends FormRequest
     public function rules(): array
     {
         $supplier = $this->route('supplier');
+
         return [
-            'name' =>  ($supplier ? 'sometimes' : 'required') . '|string|max:255',
-            'email' => [($supplier ? 'sometimes' : 'required') . '|string', 'email', Rule::unique('suppliers', 'email')->ignore($supplier)],
-            'phone' => ($supplier ? 'sometimes' : 'required') . '|string',
-            'address' => ($supplier ? 'sometimes' : 'required')
+            'name' => [
+                $supplier ? 'sometimes' : 'required',
+                'string',
+                'max:255'
+            ],
+            'email' => [
+                $supplier ? 'sometimes' : 'required',
+                'string',
+                'email',
+                Rule::unique('suppliers', 'email')->ignore($supplier)
+            ],
+            'phone' => [
+                $supplier ? 'sometimes' : 'required',
+                'string'
+            ],
+            'address' => [
+                $supplier ? 'sometimes' : 'required',
+                'string'
+            ]
         ];
     }
 }

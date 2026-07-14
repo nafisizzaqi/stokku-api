@@ -52,7 +52,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'data' => $product
-        ]);
+        ], 201);
     }
 
     /**
@@ -64,7 +64,6 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'data' => $product,
-            'stock' => $product->stock
         ]);
     }
 

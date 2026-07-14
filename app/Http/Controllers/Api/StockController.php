@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\StockTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StockController extends Controller
 {
@@ -43,6 +45,8 @@ class StockController extends Controller
             }
             return $stockTransaction;
         });
+        Log::channel('daily')->info('[TRANSACTION] ' . " product_id={$stockTransaction->product_id} " . " type={$stockTransaction->type} " . " qty={$stockTransaction->quantity} " . " by=user_id={$stockTransaction->user_id} ");
+        Cache::forget('report.low_stock');
         return response()->json([
             'success' => true,
             'data' => $stockTransaction->load(['product', 'user'])
