@@ -6,7 +6,8 @@ cmds = ["composer install --optimize-autoloader --no-dev"]
 
 [phases.build]
 cmds = [
-  "mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs",
+  "mkdir -p storage/framework/{sessions,views,cache}",
+  "mkdir -p storage/logs",
   "chmod -R 775 storage bootstrap/cache",
   "php artisan config:cache",
   "php artisan route:cache",
@@ -14,4 +15,4 @@ cmds = [
 ]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
