@@ -18,7 +18,9 @@ class Product extends Model
         'stock',
         'min_stock',
         'image_path',
-        'is_active'
+        'is_active',
+        'tax',
+        'price_after_tax'
     ];
 
     public function category()

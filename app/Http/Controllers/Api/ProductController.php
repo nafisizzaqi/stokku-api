@@ -47,6 +47,11 @@ class ProductController extends Controller
             $validated['image_path'] = $path;
         }
 
+        $tax_after = ($validated['price'] * $validated['tax']) / 100;
+
+        $priceAfterTax = $validated['price'] + $tax_after;
+        $validated['price_after_tax'] = $priceAfterTax;
+
         $validated['is_active'] = false;
         $product = Product::create($validated);
         return response()->json([

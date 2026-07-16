@@ -30,6 +30,7 @@ class ProductRequest extends FormRequest
             'price' => 'required|numeric|decimal:2',
             'stock' => 'required|integer',
             'min_stock' => 'required|integer',
+            'tax' => 'required|string',
             'image' => 'required|image|mimes:jpg,png,jpeg|max:2048'
         ];
     }
