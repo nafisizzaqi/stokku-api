@@ -35,7 +35,7 @@ class SupplierRequest extends FormRequest
                 $supplier ? 'sometimes' : 'required',
                 'string',
                 'email',
-                Rule::unique('suppliers', 'email')->ignore($supplier)
+                Rule::unique('suppliers', 'email')->ignore($supplier)->whereNull('deleted_at')
             ],
             'phone' => [
                 $supplier ? 'sometimes' : 'required',

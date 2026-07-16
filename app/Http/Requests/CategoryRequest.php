@@ -37,7 +37,7 @@ class CategoryRequest extends FormRequest
                 'string',
                 'min:3',
                 'max:255',
-                Rule::unique('categories', 'slug')->ignore($category)
+                Rule::unique('categories', 'slug')->ignore($category)->whereNull('deleted_at')
             ],
         ];
     }
