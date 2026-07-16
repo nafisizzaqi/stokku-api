@@ -81,7 +81,8 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric',
             'stock' => 'sometimes|integer',
             'min_stock' => 'sometimes|integer',
-            'image' => 'sometimes|image|mimes:jpg,png,jpeg|max:2048'
+            'image' => 'sometimes|image|mimes:jpg,png,jpeg|max:2048',
+            'is_active' => 'sometimes'
         ]);
 
         if ($request->hasFile('image')) {
